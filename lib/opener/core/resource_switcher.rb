@@ -1,0 +1,80 @@
+require 'tempfile'
+require 'uri'
+require_relative 'opt_parser'
+
+module Opener
+  module Core
+    class ResourceSwitcher
+
+      def bind(opts, options)
+        OptParser.bind(opts,options)
+      end
+
+      def install(options)
+        Installer.new(options).install
+      end
+
+      class Installer
+        attr_reader :options
+
+        def initialize(options={})
+          @options = options
+        end
+
+        def install
+          path = options.fetch(:resource_path) { raise ArgumentError, "No resource-path given" }
+          if url = options[:resource_url]
+            download_and_unzip_resource(url,path)
+          end
+        end
+
+        def download_and_unzip_resource(url, path)
+          filename = download(url)
+          unzip(filename, path)
+        end
+
+        def download(url)
+          filename = get_filename_from_url(url)
+          destination = "/tmp/#{filename}"
+          `wget -N -O #{destination} #{url}`
+
+          return destination
+        end
+
+        def unzip(file, path)
+          extname = File.extname(file)
+          if extname == ".zip"
+            `unzip #{file} -o -d #{path}`
+          else
+            `tar -zxvf #{file} --directory #{path}`
+          end
+        end
+
+        def get_filename_from_url(url)
+          URI.parse(url).path[1..-1].split("/").last
+        end
+      end
+
+      class OptParser < Opener::Core::OptParser
+        attr_accessor :option_parser, :options
+
+        def self.bind(opts, options)
+          opts.on("--resource-path PATH", "Path where the resources are located. In combination with the --resource-url option this is also the path where the resources will be installed") do |v|
+            options[:resource_path] = v
+          end
+
+          opts.on("--resource-url URL", "URL where a zip file containing all resources can be downloaded") do |v|
+            options[:resource_url] = v
+          end
+        end
+        private
+
+        def construct_option_parser(options, &block)
+          OptionParser.new do |opts|
+            self.class.bind(opts, options)
+          end
+        end
+      end
+    end
+  end
+end
