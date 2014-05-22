@@ -10,8 +10,8 @@ module Opener
         OptParser.bind(opts,options)
       end
 
-      def install(options)
-        Installer.new(options).install
+      def install(options, force=true)
+        Installer.new(options).install(force)
       end
 
       class Installer
@@ -21,8 +21,14 @@ module Opener
           @options = options
         end
 
-        def install
-          path = options.fetch(:resource_path) { raise ArgumentError, "No resource-path given" }
+        def install(force=true)
+          return if !options[:resource_path] && !options[:resource_url]
+
+          path = options[:resource_path]
+          if options[:resource_url] || (path.nil? && force)
+            raise ArgumentError, "No resource-path given"
+          end
+
           if url = options[:resource_url]
             download_and_unzip_resource(url,path)
           end
