@@ -50,7 +50,7 @@ module Opener
         def unzip(file, path)
           extname = File.extname(file)
           if extname == ".zip"
-            `unzip #{file} -o -d #{path}`
+            `unzip -o #{file} -d #{path}`
           else
             `tar -zxvf #{file} --directory #{path}`
           end
