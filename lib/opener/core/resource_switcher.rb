@@ -25,7 +25,7 @@ module Opener
           return if !options[:resource_path] && !options[:resource_url]
 
           path = options[:resource_path]
-          if options[:resource_url] || (path.nil? && force)
+          if options[:resource_url] && path.nil? && force
             raise ArgumentError, "No resource-path given"
           end
 
