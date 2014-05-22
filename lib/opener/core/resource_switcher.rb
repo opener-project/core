@@ -43,14 +43,13 @@ module Opener
           filename = get_filename_from_url(url)
           destination = File.expand_path(filename, path)
           `wget -N -P #{path} #{url}`
-
           return destination
         end
 
         def unzip(file, path)
           extname = File.extname(file)
           if extname == ".zip"
-            puts `unzip #{file} -o -d #{path}`
+            puts `unzip -o #{file} -d #{path}`
           else
             puts `tar -zxvf #{file} --directory #{path}`
           end
