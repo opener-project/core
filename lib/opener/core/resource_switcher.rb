@@ -48,10 +48,12 @@ module Opener
 
         def unzip(file, path)
           extname = File.extname(file)
+          full_filename = Dir.glob("#{file}*").first
+          puts "Extracting full_filename"
           if extname == ".zip"
-            puts `unzip -o #{file} -d #{path}`
+            puts `unzip -o #{full_filename} -d #{path}`
           else
-            puts `tar -zxvf #{file} --directory #{path}`
+            puts `tar -zxvf #{full_filename} --directory #{path}`
           end
         end
 
