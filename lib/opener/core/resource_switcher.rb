@@ -40,8 +40,9 @@ module Opener
         end
 
         def download(url)
-          filename = get_filename_from_url(url)
-          destination = "/tmp/#{filename}"
+          filename    = get_filename_from_url(url)
+          destination = File.join(Dir.tmpdir, filename)
+
           `wget -N -O #{destination} #{url}`
 
           return destination
