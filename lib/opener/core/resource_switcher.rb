@@ -35,14 +35,14 @@ module Opener
         end
 
         def download_and_unzip_resource(url, path)
-          filename = download(url)
+          filename = download(url, path)
           unzip(filename, path)
         end
 
-        def download(url)
+        def download(url, path)
           filename = get_filename_from_url(url)
-          destination = "/tmp/#{filename}"
-          `wget -N -O #{destination} #{url}`
+          destination = File.expand_path(filename, path)
+          `wget -N -P #{path} #{url}`
 
           return destination
         end
@@ -50,9 +50,9 @@ module Opener
         def unzip(file, path)
           extname = File.extname(file)
           if extname == ".zip"
-            `unzip #{file} -o -d #{path}`
+            puts `unzip #{file} -o -d #{path}`
           else
-            `tar -zxvf #{file} --directory #{path}`
+            puts `tar -zxvf #{file} --directory #{path}`
           end
         end
 
