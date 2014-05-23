@@ -29,6 +29,8 @@ module Opener
             raise ArgumentError, "No resource-path given"
           end
 
+          FileUtils.mkdir_p File.expand_path(path)
+
           if url = options[:resource_url]
             download_and_unzip_resource(url,path)
           end
