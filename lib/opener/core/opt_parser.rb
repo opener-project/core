@@ -1,5 +1,3 @@
-require 'optparse'
-
 module Opener
   module Core
     class OptParser

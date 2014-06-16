@@ -1,7 +1,3 @@
-require 'tempfile'
-require 'uri'
-require_relative 'opt_parser'
-
 module Opener
   module Core
     class ResourceSwitcher

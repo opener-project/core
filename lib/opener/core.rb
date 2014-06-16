@@ -1,7 +1,8 @@
-require "opener/core/version"
+require 'optparse'
+require 'tempfile'
+require 'uri'
 
-module Opener
-  module Core
-    # Your code goes here...
-  end
-end
+require_relative 'core/version'
+require_relative 'core/argv_splitter'
+require_relative 'core/opt_parser'
+require_relative 'core/resource_switcher'

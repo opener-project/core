@@ -1,8 +1,7 @@
-require_relative '../lib/opener/core/argv_splitter'
+require 'spec_helper'
 
 describe Opener::Core::ArgvSplitter do
   let(:s) { Opener::Core::ArgvSplitter }
-
 
   example "empty" do
     s.split([]).should eql([[],[]])

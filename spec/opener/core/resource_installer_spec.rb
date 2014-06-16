@@ -1,4 +1,4 @@
-require_relative '../lib/opener/core/resource_switcher'
+require 'spec_helper'
 
 describe Opener::Core::ResourceSwitcher::Installer do
   let(:i) { Opener::Core::ResourceSwitcher::Installer.new(["--resource-path","~/tmp"]) }
