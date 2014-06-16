@@ -1,29 +1,27 @@
 # Opener::Core
 
-TODO: Write a gem description
+A Gem that provides commonly re-used functionality for the various OpeNER Gems.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+You can install opener-core as a Gem by running:
+
+    gem install opener-core
+
+If you're using Bundler you can add the following to your Gemfile:
 
     gem 'opener-core'
 
-And then execute:
+Then run `bundle install` to install all the Gems.
 
-    $ bundle
+## Development
 
-Or install it yourself as:
+Assuming you have a local copy of this repository, first install all the Gems:
 
-    $ gem install opener-core
+    bundle install
 
-## Usage
+Then run the tests to make sure everything is working:
 
-TODO: Write usage instructions here
+    rake
 
-## Contributing
-
-1. Fork it ( http://github.com/<my-github-username>/opener-core/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+You're now good to go!
