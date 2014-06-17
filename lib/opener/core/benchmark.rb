@@ -99,22 +99,13 @@ module Opener
 
         benchmarks.add_child(benchmark)
 
-        return convert_document(document)
+        return document.to_xml(
+          :indent   => 2,
+          :encoding => document.encoding || 'UTF-8'
+        )
       end
 
       private
-
-      ##
-      # @param [Nokogiri::XML::Document] document
-      # @return [String]
-      #
-      def convert_document(document)
-        if document.encoding and !document.encoding.empty?
-          return document.to_xml
-        else
-          return document.to_xml(:encoding => 'UTF-8')
-        end
-      end
 
       ##
       # @param [Nokogiri::XML::Document] document
