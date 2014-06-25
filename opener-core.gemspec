@@ -7,12 +7,13 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Gem that contains some low level generic functions for all OpeNER components.'
   spec.description   = spec.summary
   spec.homepage      = 'http://opener-project.github.com'
-  spec.license       = 'Apachev2'
+  spec.license       = 'Apache 2.0'
 
   spec.files = Dir.glob([
     'lib/**/*',
     '*.gemspec',
-    'README.md'
+    'README.md',
+    'LICENSE.txt'
   ]).select { |file| File.file?(file) }
 
   spec.executables = Dir.glob('bin/*').map { |file| File.basename(file) }
