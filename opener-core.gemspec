@@ -18,8 +18,6 @@ Gem::Specification.new do |spec|
 
   spec.executables = Dir.glob('bin/*').map { |file| File.basename(file) }
 
-  spec.add_dependency 'nokogiri'
-
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
