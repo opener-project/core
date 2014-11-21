@@ -1,85 +1,128 @@
 module Opener
   module Core
+    ##
+    # Class for downloading and extracting external resources such as
+    # models/lexicons.
+    #
+    # @!attribute [r] http
+    #  @return [HTTPClient]
+    #
     class ResourceSwitcher
+      attr_reader :http
 
-      def bind(opts, options)
-        OptParser.bind(opts,options)
+      def initialize
+        @http = HTTPClient.new
       end
 
-      def install(options, force=true)
-        Installer.new(options).install(force)
-      end
+      ##
+      # Adds extra CLI options to the given Slop instance.
+      #
+      # @param [Slop] slop
+      #
+      def bind(slop)
+        slop.separator "\nResource Options:\n"
 
-      class Installer
-        attr_reader :options
+        slop.on :'resource-url=',
+          'URL pointing to a .zip/.tar.gz file to download',
+          :as => String
 
-        def initialize(options={})
-          @options = options
-        end
+        slop.on :'resource-path=',
+          'Path where the resources should be saved',
+          :as => String
 
-        def install(force=true)
-          return if !options[:resource_path] && !options[:resource_url]
+        # Hijack Slop's run block so we can inject our own code before it.  This
+        # is quite grotesque, but sadly the only way.
+        old_runner = slop.instance_variable_get(:@runner)
 
-          path = options[:resource_path]
-          if options[:resource_url] && path.nil? && force
-            raise ArgumentError, "No resource-path given"
+        slop.run do |opts, args|
+          if opts[:'resource-path'] and opts[:'resource-url']
+            download_and_extract(opts[:'resource-url'], opts[:'resource-path'])
           end
 
-          FileUtils.mkdir_p File.expand_path(path)
-
-          if url = options[:resource_url]
-            download_and_unzip_resource(url,path)
-          end
-        end
-
-        def download_and_unzip_resource(url, path)
-          filename = download(url, path)
-          unzip(filename, path)
-        end
-
-        def download(url, path)
-          filename = get_filename_from_url(url)
-          destination = File.expand_path(filename, path)
-          `wget -N -P #{path} #{url}`
-          return destination
-        end
-
-        def unzip(file, path)
-          extname = File.extname(file)
-          full_filename = Dir.glob("#{file}*").first
-          puts "Extracting full_filename"
-          if extname == ".zip"
-            puts `unzip -o #{full_filename} -d #{path}`
-          else
-            puts `tar -zxvf #{full_filename} --directory #{path}`
-          end
-        end
-
-        def get_filename_from_url(url)
-          URI.parse(url).path[1..-1].split("/").last
+          old_runner.call(opts, args)
         end
       end
 
-      class OptParser < Opener::Core::OptParser
-        attr_accessor :option_parser, :options
+      ##
+      # @param [String] url
+      # @param [String] path
+      #
+      def download_and_extract(url, path)
+        filename  = filename_from_url(url)
+        temp_path = File.join(path, filename)
 
-        def self.bind(opts, options)
-          opts.on("--resource-path PATH", "Path where the resources are located. In combination with the --resource-url option this is also the path where the resources will be installed") do |v|
-            options[:resource_path] = v
-          end
+        create_directory(path)
 
-          opts.on("--resource-url URL", "URL where a zip file containing all resources can be downloaded") do |v|
-            options[:resource_url] = v
-          end
-        end
-        private
+        download(url, temp_path)
 
-        def construct_option_parser(options, &block)
-          OptionParser.new do |opts|
-            self.class.bind(opts, options)
+        Archive.extract(temp_path, path)
+
+        remove_file(temp_path)
+      end
+
+      ##
+      # Downloads the given file.
+      #
+      # @param [String] url
+      # @param [String] path
+      #
+      def download(url, path)
+        File.open(path, 'w', :encoding => Encoding::BINARY) do |handle|
+          http.get(url) do |chunk|
+            handle.write(chunk)
           end
         end
       end
-    end
-  end
-end
+
+      ##
+      # Returns the filename of the file located at `url`.
+      #
+      # @param [String] url
+      # @return [String]
+      #
+      def filename_from_url(url)
+        headers = get_headers(url)
+
+        unless headers['Content-Disposition']
+          raise "The URL #{url.inspect} did not return a Content-Disposition " \
+            "header. This header is required to figure out the filename"
+        end
+
+        matches = headers['Content-Disposition'].match(/filename=(.+)/)
+
+        if !matches or !matches[1]
+          raise 'No filename could be found in the Content-Disposition header'
+        end
+
+        return matches[1]
+      end
+
+      ##
+      # Creates the path. This method mainly exists to make testing a bit
+      # easier.
+      #
+      # @param [String] path
+      #
+      def create_directory(path)
+        FileUtils.mkdir_p(path)
+      end
+
+      ##
+      # Removes the given file, mainly exists to make testing easier.
+      #
+      # @param [String] path
+      #
+      def remove_file(path)
+        File.unlink(path)
+      end
+
+      ##
+      # @param [String] url
+      # @return [Hash]
+      #
+      def get_headers(url)
+        return http.head(url).headers
+      end
+    end # ResourceSwitcher
+  end # Core
+end # Opener

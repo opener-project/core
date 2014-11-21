@@ -1,4 +1,5 @@
 require 'rspec'
+require 'tempfile'
 
 require_relative '../lib/opener/core'
 

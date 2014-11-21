@@ -1,7 +1,11 @@
-require 'optparse'
 require 'tempfile'
 require 'uri'
 require 'syslog'
+require 'fileutils'
+
+require 'slop'
+require 'httpclient'
+require 'archive'
 
 require_relative 'core/version'
 require_relative 'core/opt_parser'
