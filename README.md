@@ -1,6 +1,18 @@
-# Opener::Core
+# Opener Core
 
 A Gem that provides commonly re-used functionality for the various OpeNER Gems.
+
+## Requirements
+
+| Ruby     | Required      | Recommended |
+|:---------|:--------------|:------------|
+| MRI      | >= 1.9.3      | >= 2.1.4    |
+| Rubinius | >= 2.2        | >= 2.3.0    |
+| JRuby    | >= 1.7        | >= 1.7.16   |
+
+For the resource switcher you'll need to have
+[libarchive](http://www.libarchive.org/) installed as it's used for unpacking
+archives.
 
 ## Installation
 
