@@ -4,6 +4,10 @@ module Opener
     # Class for downloading and extracting external resources such as
     # models/lexicons.
     #
+    # Resource paths specified using the `--resource-path` option are stored in
+    # the environment variable `RESOURCE_PATH`. This variable should be used in
+    # webservice/daemon code instead of said code re-parsing CLI arguments.
+    #
     # @!attribute [r] http
     #  @return [HTTPClient]
     #
@@ -38,6 +42,10 @@ module Opener
           if opts[:'resource-path'] and opts[:'resource-url']
             download_and_extract(opts[:'resource-url'], opts[:'resource-path'])
           end
+
+          # Allow daemons/webservices to use the path without having to re-parse
+          # CLI options.
+          ENV['RESOURCE_PATH'] = opts[:'resource-path']
 
           old_runner.call(opts, args)
         end
