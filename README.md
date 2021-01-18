@@ -10,10 +10,6 @@ A Gem that provides commonly re-used functionality for the various OpeNER Gems.
 | Rubinius | >= 2.2        | >= 2.3.0    |
 | JRuby    | >= 1.7        | >= 1.7.16   |
 
-For the resource switcher you'll need to have
-[libarchive](http://www.libarchive.org/) installed as it's used for unpacking
-archives.
-
 ## Installation
 
 You can install opener-core as a Gem by running:
